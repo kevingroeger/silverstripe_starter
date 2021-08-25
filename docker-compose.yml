@@ -1,0 +1,37 @@
+version: '3.6'
+
+networks:
+  internal:
+    external: false
+
+services:
+  database:
+    image: mysql:5.7.35
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - internal
+    environment:
+      MYSQL_DATABASE: database
+      MYSQL_USER: database
+      MYSQL_PASSWORD: database
+      MYSQL_ROOT_PASSWORD: database
+  web:
+    image: webdevops/php-apache:7.2
+    volumes:
+      - ./src:/app:delegated
+    networks:
+      - internal
+    environment:
+      WEB_DOCUMENT_ROOT: /app
+      HTTPS_METHOD: noredirect
+      PHP_DISPLAY_ERRORS: 1
+    ports:
+      - "8080:80"
+    links:
+      - database
+volumes:
+  db:
+    name: db
